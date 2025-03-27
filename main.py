@@ -20,19 +20,32 @@ def hello_world():
 
 @app.route('/video/<video_name>/<file_name>')
 def stream(video_name, file_name):
+    with open(f"./{video_name}/{file_name}", "wb+") as f:
+        response = (
+            supabase.storage
+            .from_("videos")
+            .download(f"{video_name}/{file_name}")
+        )
+        f.write(response)
+    return jsonify(f)
 
-    return
-
-@app.route('/filmes-lista')
-def lista_de_filmes():
-    response = supabase.storage.list_buckets()
+@app.route('/lista-de-videos')
+def arquivos_do_balde():
+    response = (
+        supabase.storage
+        .from_("videos")
+        .list(
+            "folder",
+            {
+                "limit": 100,
+                "offset": 0,
+                "sortBy": {"column": "name", "order": "desc"},
+            }
+        )
+    )
     return jsonify(response)
 
 
-def supa():
-    response = supabase.storage.list_buckets()
-
-    print(response)
 
 
 if __name__ == '__main__':
