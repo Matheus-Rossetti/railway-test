@@ -1,10 +1,13 @@
-from flask import Flask
+from flask import Flask, jsonify
 import os
 
 from supabase import create_client, Client
 
+
 url: str = os.environ.get("SUPABASE_URL")
 key: str = os.environ.get("SUPABASE_KEY")
+
+
 supabase: Client = create_client(url, key)
 
 app = Flask(__name__)
@@ -21,10 +24,17 @@ def stream(video_name, file_name):
     return
 
 @app.route('/filmes-lista')
-async def lista_de_filmes():
-    response = await supabase.storage.list_buckets()
-    return response
+def lista_de_filmes():
+    response = supabase.storage.list_buckets()
+    return jsonify(response)
+
+
+def supa():
+    response = supabase.storage.list_buckets()
+
+    print(response)
 
 
 if __name__ == '__main__':
     app.run()
+
