@@ -20,14 +20,8 @@ def hello_world():
 
 @app.route('/video/<video_name>/<file_name>')
 def stream(video_name, file_name):
-    with open(f"./{video_name}/{file_name}", "wb+") as f:
-        response = (
-            supabase.storage
-            .from_("videos")
-            .download(f"{video_name}/{file_name}")
-        )
-        f.write(response)
-    return jsonify(f)
+    response = (supabase.storage.from_("videos").download(f"{video_name}/{file_name}"))
+    return jsonify(response)
 
 @app.route('/lista-de-videos')
 def arquivos_do_balde():
@@ -35,7 +29,7 @@ def arquivos_do_balde():
         supabase.storage
         .from_("videos")
         .list(
-            "folder",
+            "/",
             {
                 "limit": 100,
                 "offset": 0,
