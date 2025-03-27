@@ -1,7 +1,11 @@
 from flask import Flask
 import os
 
-from flask import send_from_directory
+from supabase import create_client, Client
+
+url: str = os.environ.get("SUPABASE_URL")
+key: str = os.environ.get("SUPABASE_KEY")
+supabase: Client = create_client(url, key)
 
 app = Flask(__name__)
 
@@ -13,13 +17,13 @@ def hello_world():
 
 @app.route('/video/<video_name>/<file_name>')
 def stream(video_name, file_name):
-    video_path = os.path.join('videos', video_name)
-    return send_from_directory(video_path, file_name)
+
+    return
 
 @app.route('/filmes-lista')
-def lista_de_filmes():
-    lista = os.listdir('videos')
-    return lista
+async def lista_de_filmes():
+    response = await supabase.storage.list_buckets()
+    return response
 
 
 if __name__ == '__main__':
